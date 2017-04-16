@@ -1231,12 +1231,12 @@ public class SlackWebApiClientImpl implements SlackWebApiClient {
 
 	protected JsonNode call(SlackMethod method, InputStream is) {
 
-		List<ValidationError> errors = new ArrayList<ValidationError>();
+		List<ValidationError> errors = new ArrayList<>();
 		method.validate(errors);
 
 		if (errors.size() > 0) {
 
-			StringBuffer sb = new StringBuffer("*** slack argument error ***");
+			StringBuilder sb = new StringBuilder("*** slack argument error ***");
 			for (ValidationError error : errors) {
 				if (sb.length() > 0) {
 					sb.append("\n");
@@ -1245,7 +1245,7 @@ public class SlackWebApiClientImpl implements SlackWebApiClient {
 				if (error.getDescription() != null) {
 					sb.append(error.getDescription());
 				} else if (error.getProblem() == Problem.REQUIRED) {
-					sb.append("\"" + error.getField() + "\" is required.");
+					sb.append("\"").append(error.getField()).append("\" is required.");
 				}
 			}
 
@@ -1259,7 +1259,7 @@ public class SlackWebApiClientImpl implements SlackWebApiClient {
 
 		String apiUrl = SlackWebApiConstants.SLACK_WEB_API_URL + "/" + method.getMethodName();
 
-		HttpEntity httpEntity = null;
+		HttpEntity httpEntity;
 		if (is == null) {
 			httpEntity = RestUtils.createUrlEncodedFormEntity(parameters);
 		} else {
@@ -1268,7 +1268,7 @@ public class SlackWebApiClientImpl implements SlackWebApiClient {
 
 		String retContent = RestUtils.execute(httpClient, apiUrl, httpEntity);
 
-		JsonNode retNode = null;
+		JsonNode retNode;
 		try {
 			retNode = mapper.readTree(retContent);
 		} catch (IOException e) {
@@ -1280,8 +1280,6 @@ public class SlackWebApiClientImpl implements SlackWebApiClient {
 			String error = retNode.findPath("error").asText();
 			throw new SlackResponseErrorException(error + ". check the link " + SlackWebApiConstants.SLACK_WEB_API_DOCUMENT_URL + "/" + method.getMethodName());
 		}
-
 		return retNode;
 	}
-
 }

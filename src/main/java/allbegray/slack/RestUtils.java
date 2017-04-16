@@ -28,7 +28,7 @@ public abstract class RestUtils {
 	private static Log logger = LogFactory.getLog(RestUtils.class);
 
 	public static HttpEntity createUrlEncodedFormEntity(Map<String, String> parameters) {
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>(parameters.size());
+		List<NameValuePair> nvps = new ArrayList<>(parameters.size());
 		for (Entry<String, String> entry : parameters.entrySet()) {
 			nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
 		}
@@ -49,8 +49,7 @@ public abstract class RestUtils {
 	public static CloseableHttpClient createHttpClient(int timeout) {
 		RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-		CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
-		return httpClient;
+		return HttpClientBuilder.create().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig).build();
 	}
 
 	public static String execute(CloseableHttpClient httpClient, String url, HttpEntity httpEntity) {
